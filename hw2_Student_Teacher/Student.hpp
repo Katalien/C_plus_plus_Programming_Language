@@ -8,10 +8,6 @@
 using namespace std;
 using std::string;
 
-
-
-
-
 class Student {
 public:
 	Student(string& studentName) : name(studentName) {};

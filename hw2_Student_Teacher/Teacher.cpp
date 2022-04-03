@@ -3,15 +3,14 @@
 #include"HomeWork.hpp"
 #include"Student.hpp"
 #include"Teacher.hpp"
+#include<iomanip>
 
+using namespace::std;
 
 void Teacher::AddToQeuee(HomeWork hw) {
 	vector <Equation::Solution> answers = hw.getAnswers();
 	for (int i = 0; i < answers.size(); i++) {
-		QueueItem* curQueue = nullptr;
-		curQueue->student = hw.GetStudent();
-		curQueue->eq = hw.getEquations()[i];
-		curQueue->ans = hw.getAnswers()[i];
+		QueueItem curQueue = { hw.getEquations()[i],hw.getAnswers()[i], hw.GetStudent() };
 		answersToCheck.push(curQueue);
 	}
 }
@@ -35,24 +34,27 @@ Teacher::Bool Teacher::IsSolCorrect(Equation::Solution correctSolution, Equation
 }
 
 void Teacher::CheckAnswers() {
-	QueueItem* answerItem = nullptr;
-	for (int i = 0; i < answersToCheck.size(); i++) {
-		resultsTable[answerItem->student] = 0;
-	}
-	while(!answersToCheck.empty()) {
-		answerItem = answersToCheck.front();
-		answersToCheck.pop();		
-		Equation::Solution correctSol = answerItem->eq.getSolution();
-		Equation::Solution studentSol = answerItem->ans;
-		if (IsSolCorrect(correctSol, studentSol) == TRUE) {
-			resultsTable[answerItem->student]++;
+		while(!answersToCheck.empty()) {
+			QueueItem answerItem = answersToCheck.front();
+			answersToCheck.pop();
+			resultsTable[answerItem.student];
+			Equation::Solution correctSol = answerItem.eq.getSolution();
+			Equation::Solution studentSol = answerItem.ans;
+			if (IsSolCorrect(correctSol, studentSol) == TRUE) {
+				resultsTable[answerItem.student]++;
+			}
 		}
 	}
-}
 
 void Teacher::PrintTable() {
-	cout << "Student" << "   " << "Score" << "\n";
-	for (auto item : Teacher::resultsTable) {
-		cout << item.first << "  " << item.second <<"\n";
+	int line = 46;
+	int firstColSize = 20;
+	int secondColSize = 26;
+	cout << "+" << setfill('-') << setw(34) << "+" << endl;
+	cout << "|    Surname Name     |" << setfill(' ') << setw(10)  << "  Score    |" << endl;
+	cout << "+" << setfill('-') << setw(34) << "+" << endl;
+	for (auto& item : Teacher::resultsTable) {
+		cout << "|  " << item.first->getname()  << setfill(' ') << setw(firstColSize - item.first->getname().length()) << "|" << "     " << item.second << "     |" << endl;
 	}
+	cout << "+" << setfill('-') << setw(34) << "+" << endl;
 }

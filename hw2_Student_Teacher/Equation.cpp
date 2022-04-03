@@ -22,4 +22,3 @@ void Equation::SolveEqCorrect() {
 		return;
 	}
 }
-

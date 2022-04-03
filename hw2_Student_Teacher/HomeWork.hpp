@@ -3,7 +3,6 @@
 #include <string>
 #include <vector>
 #include "Equation.hpp"
-//#include "Student.hpp"
 
 class Student;
 using std::vector;
