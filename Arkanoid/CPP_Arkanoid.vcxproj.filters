@@ -32,5 +32,14 @@
     <ClInclude Include="Blocks.hpp">
       <Filter>Файлы ресурсов</Filter>
     </ClInclude>
+    <ClInclude Include="Player.hpp">
+      <Filter>Файлы ресурсов</Filter>
+    </ClInclude>
+    <ClInclude Include="Window.hpp">
+      <Filter>Файлы ресурсов</Filter>
+    </ClInclude>
+    <ClInclude Include="Bonus.hpp">
+      <Filter>Файлы ресурсов</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

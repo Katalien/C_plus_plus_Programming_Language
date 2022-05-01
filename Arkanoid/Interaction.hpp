@@ -2,6 +2,7 @@
 #include"Ball.hpp"
 #include"Carriage.hpp"
 #include"Blocks.hpp"
+#include"Bonus.hpp"
 #include <cmath>
 
 class Interaction {
@@ -23,12 +24,18 @@ public:
 		}
 	}
 
-	void solveCollision(Ball& ball, Block& block) {
+	Type solveCollision(Ball& ball, Block& block) {
 		if (!IsTouch(ball, block)) {
-			return;
+			return null;
 		}
-		block.destroyed = true;
-
+		if (block.GetType() == normal || block.GetType() == withBonus) {
+			block.destroyed = true;
+		}
+		if (block.GetType() == withBonus) {
+			return withBonus;
+		}
+		
+		
 		float hitLeft{ ball.right() - block.left() };
 		float hitRight{ block.right() - ball.left() };
 		float hitTop{ ball.bottom() - block.top() };
@@ -68,6 +75,10 @@ public:
 			}
 		
 		}
+		if (block.GetType() == speedUp) {
+			return speedUp;
+		}
+		return normal;
 	}
-
+	
 };

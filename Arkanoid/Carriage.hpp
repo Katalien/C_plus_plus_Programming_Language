@@ -6,7 +6,7 @@
 using namespace std;
 using namespace sf;
 
-constexpr float carriageWidth{60.f}, carriageHeight{20.f}, carriageVelocity{6.f};
+constexpr float carriageWidth{80.f}, carriageHeight{20.f}, carriageVelocity{8.f};
 
 class Carriage {
 public:

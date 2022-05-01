@@ -1,12 +1,13 @@
 #pragma once
 #include <SFML/Graphics.hpp>
 #include <SFML/Window.hpp>
+#include "Window.hpp"
 
 using namespace std;
 using namespace sf;
 
-constexpr int windowWidth{ 800 }, windowHeight{ 600 };
-constexpr float ballRadius{ 10.f }, ballVelocity{8.f};
+
+constexpr float ballRadius{ 10.f }, ballVelocity{6.f};
 
 class Ball {
 public:

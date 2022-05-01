@@ -156,8 +156,11 @@
   <ItemGroup>
     <ClInclude Include="Ball.hpp" />
     <ClInclude Include="Blocks.hpp" />
+    <ClInclude Include="Bonus.hpp" />
     <ClInclude Include="Carriage.hpp" />
     <ClInclude Include="Interaction.hpp" />
+    <ClInclude Include="Player.hpp" />
+    <ClInclude Include="Window.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
