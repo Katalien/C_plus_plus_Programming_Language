@@ -7,7 +7,7 @@ using namespace std;
 using namespace sf;
 
 
-constexpr float ballRadius{ 10.f }, ballVelocity{6.f};
+constexpr float ballRadius{ 10.f }, ballVelocity{5.f};
 
 class Ball {
 public:

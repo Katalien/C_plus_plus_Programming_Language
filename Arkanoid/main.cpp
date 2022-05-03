@@ -36,12 +36,17 @@ int main() {
         ball.update();
         carriage.update();
         interaction.solveCollision(ball, carriage);
+        cout << player.GetScore() << endl;
         for (int i = 0; i < blocks.size(); i++) {
             Type type = interaction.solveCollision(ball, blocks[i]);
+            if (type != null) {
+                player.SetScore(player.GetScore() + 1);
+                cout << player.GetScore() << endl;
+            }
             if (type == withBonus) {
                 Bonus bonus = { blocks[i].getX(), blocks[i].getY()};
                 bonuses.push_back(bonus);
-                player.SetScore(player.GetScore() + 5);
+                player.SetScore(player.GetScore() + 1);
                 cout << player.GetScore() << endl;
             }
             if (type == speedUp) {
@@ -54,11 +59,8 @@ int main() {
             bonuses.at(i).update();
         }
         if (ball.bottom() >= windowHeight) {
-            player.SetScore(player.GetScore() - 5);
-            cout << player.GetScore() << endl;
-        }
-        
-        
+            player.SetScore(player.GetScore() - 1);
+        }       
         blocks.erase(remove_if(begin(blocks), end(blocks), [](const Block& _block) {return _block.destroyed;}), end(blocks));
         for (int i = 0; i < blocks.size(); i++) {
             window.draw(blocks[i].shape);
@@ -76,19 +78,19 @@ vector<Block> CreateBlocks() {
             int tmp = rand() % 4;
             //int tmp = 2;
             if (tmp == 0) {
-                Block blockTmp{ (i + 1) * (blockWidth + 3) + 22, (j + 2) * (blockHeight + 3) };
+                Block blockTmp{ (i + 1) * (blockWidth + 3) + 22, 50 + (j + 2) * (blockHeight + 3) };
                 blocks.push_back(blockTmp);
             }
             if (tmp == 1) {
-                UnbreakableBlock blockTmp{ (i + 1) * (blockWidth + 3) + 22, (j + 2) * (blockHeight + 3) };
+                UnbreakableBlock blockTmp{ (i + 1) * (blockWidth + 3) + 22, 50 + (j + 2) * (blockHeight + 3) };
                 blocks.push_back(blockTmp);
             }
             if (tmp == 2) {
-                BlockWithBonus blockTmp{ (i + 1) * (blockWidth + 3) + 22, (j + 2) * (blockHeight + 3) };
+                BlockWithBonus blockTmp{ (i + 1) * (blockWidth + 3) + 22, 50 + (j + 2) * (blockHeight + 3) };
                 blocks.push_back(blockTmp);
             }
             if (tmp == 3) {
-                SpeedUpBlock blockTmp{ (i + 1) * (blockWidth + 3) + 22, (j + 2) * (blockHeight + 3) };
+                SpeedUpBlock blockTmp{ (i + 1) * (blockWidth + 3) + 22, 50 +  (j + 2) * (blockHeight + 3) };
                 blocks.push_back(blockTmp);
             }
         }

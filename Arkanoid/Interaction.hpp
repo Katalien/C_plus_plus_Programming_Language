@@ -28,13 +28,13 @@ public:
 		if (!IsTouch(ball, block)) {
 			return null;
 		}
-		if (block.GetType() == normal || block.GetType() == withBonus) {
-			block.destroyed = true;
+		if (block.GetType() == normal || block.GetType() == withBonus || block.GetType() == speedUp) {
+			block.reduceLives();
+			block.changeOpacity();
+			if (block.getLives() == 0) {
+				block.destroyed = true;
+			}
 		}
-		if (block.GetType() == withBonus) {
-			return withBonus;
-		}
-		
 		
 		float hitLeft{ ball.right() - block.left() };
 		float hitRight{ block.right() - ball.left() };
@@ -74,11 +74,8 @@ public:
 				ball.velocity.y = ballVelocity;
 			}
 		
-		}
-		if (block.GetType() == speedUp) {
-			return speedUp;
-		}
-		return normal;
+		}		
+		return block.GetType();
 	}
 	
 };

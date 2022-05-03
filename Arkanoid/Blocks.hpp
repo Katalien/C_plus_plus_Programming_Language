@@ -23,7 +23,21 @@ public:
 	
 	RectangleShape shape;
 	bool destroyed{ false };
-	Type type = normal;
+	 
+	
+
+	int getLives() { return lives; }
+	void reduceLives() {
+			lives = getLives() - 1;
+	}
+	void changeOpacity() {
+		if (GetType() != unbreakable) {
+			uint8_t transparensy = shape.getFillColor().a + 85;
+			Color tmpColor = { 0, 0, 0, transparensy };
+			Color newColor = shape.getFillColor() - tmpColor;
+			shape.setFillColor(newColor);
+		}
+	}
 	void SetType(Type _type) { type = _type; };
 	Type GetType() { return type; };
 	float getX() { return shape.getPosition().x; };
@@ -34,12 +48,16 @@ public:
 	float bottom() { return getY() + shape.getSize().y / 2.f; }
 
 	Block(float _x, float _y) {
-		shape.setFillColor(Color::Yellow);
+		SetType(normal);
+		shape.setFillColor(Color:: Yellow);
 		shape.setSize({blockWidth, blockHeight});
 		shape.setPosition(_x, _y);
 		shape.setOrigin(blockWidth / 2.f, blockHeight / 2.f);
+		lives = 3;
 	}
-
+private:
+	Type type;
+	int lives;
 };
 
 class UnbreakableBlock : public Block {
@@ -65,7 +83,7 @@ class SpeedUpBlock : public Block {
 public:
 	int bonus;
 	SpeedUpBlock(float _x, float _y) :Block(_x, _y) {
-		shape.setFillColor({ 100, 50, 80, 255 });
+		shape.setFillColor(Color:: Magenta);
 		SetType(speedUp);
 	}
 };
