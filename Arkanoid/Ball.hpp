@@ -34,7 +34,7 @@ public:
 		else if (right() > windowWidth) {
 			velocity.x = -ballVelocity;
 		}
-		if (top() < 0) {
+		if (top() < 70) {
 			velocity.y = ballVelocity;
 		}
 		else if (bottom() > windowHeight) {

@@ -9,6 +9,8 @@
 #include "Blocks.hpp"
 #include"Player.hpp"
 #include"Bonus.hpp"
+#include"Window.hpp"
+#include<string>
 
 using namespace std;
 using namespace sf;
@@ -17,6 +19,7 @@ vector<Block> CreateBlocks();
 
 int main() {
     srand(time(0));
+    ResultTable table{0, 60};
     RenderWindow window{ {windowWidth, windowHeight}, "Arkanoid"};
     window.setFramerateLimit(60);
     Ball ball{ windowWidth / 2, windowHeight / 2 };
@@ -25,14 +28,32 @@ int main() {
     vector<Block> blocks = CreateBlocks();
     vector <Bonus> bonuses;
     Player player;
-    int score = 0;
     Bonus bonus;
+    Font font;
+    string score;
+    font.loadFromFile("arial.ttf");
+    Text resultText("0", font);
+    Text text("hello", font);
+    text.setCharacterSize(45);
+    text.setStyle(sf::Text::Bold);
+    text.setColor(sf::Color::White);
+    text.setString("Score:");
+    
+    resultText.setCharacterSize(45);
+    resultText.setStyle(sf::Text::Bold);
+    resultText.setColor(sf::Color::White);
+    resultText.setPosition(windowWidth / 4.f, 5);
 
     while (true) {
         window.clear(Color::Black);
+        window.draw(table.shape);
+        // text
+        
+       
         if (Keyboard::isKeyPressed(Keyboard::Key::Escape)) break;
         window.draw(ball.shape);
         window.draw(carriage.shape);
+        window.draw(text);
         ball.update();
         carriage.update();
         interaction.solveCollision(ball, carriage);
@@ -41,13 +62,10 @@ int main() {
             Type type = interaction.solveCollision(ball, blocks[i]);
             if (type != null) {
                 player.SetScore(player.GetScore() + 1);
-                cout << player.GetScore() << endl;
             }
             if (type == withBonus) {
                 Bonus bonus = { blocks[i].getX(), blocks[i].getY()};
                 bonuses.push_back(bonus);
-                player.SetScore(player.GetScore() + 1);
-                cout << player.GetScore() << endl;
             }
             if (type == speedUp) {
                 ball.velocity.x = ball.velocity.x + 5;
@@ -58,13 +76,19 @@ int main() {
             window.draw(bonuses.at(i).shape);
             bonuses.at(i).update();
         }
-        if (ball.bottom() >= windowHeight) {
+        if (ball.bottom() == windowHeight) {
             player.SetScore(player.GetScore() - 1);
+            
         }       
         blocks.erase(remove_if(begin(blocks), end(blocks), [](const Block& _block) {return _block.destroyed;}), end(blocks));
         for (int i = 0; i < blocks.size(); i++) {
             window.draw(blocks[i].shape);
         }
+        score = to_string(player.GetScore());
+        resultText.setString(score);
+        window.draw(text);
+        window.draw(resultText);
+
         window.display();
     }
 
