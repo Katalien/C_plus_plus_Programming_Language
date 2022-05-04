@@ -34,8 +34,7 @@ public:
 			if (block.getLives() == 0) {
 				block.destroyed = true;
 			}
-		}
-		
+		}		
 		float hitLeft{ ball.right() - block.left() };
 		float hitRight{ block.right() - ball.left() };
 		float hitTop{ ball.bottom() - block.top() };
@@ -77,5 +76,43 @@ public:
 		}		
 		return block.GetType();
 	}
+
+	bool IsActivated(Bonus& bonus, Carriage& carriage, Time startTime) {
+		if (!IsTouch(bonus, carriage)) {
+			return false;
+		}
+		else {
+			bonus.SetStartTime(startTime);
+			return true;
+		}
+	}
+
+	void BonusActivate(Bonus bonus, Carriage carriage, Ball ball, Time gameClock) {
+			if (gameClock > bonus.GetStartTime() + oneBonusTime) {
+				return;
+			}
+			cout << "bonus is activated" << endl;
+			if (bonus.GetType() == sizeIncreaseBonus) {
+				ActivateSizeIncreaseBonus(bonus, carriage, ball, gameClock);
+			}
+			if (bonus.GetType() == speedDownBonus) {}
+			if (bonus.GetType() == safeBottomBonus) {}
+			if (bonus.GetType() == stickCarriageBonus) {}
+			if (bonus.GetType() == changeWayBonus) {}
+	}
+
+	void ActivateSizeIncreaseBonus(Bonus bonus, Carriage carriage, Ball ball, Time gameClock) {	
+		if (gameClock <= bonus.GetStartTime() + oneBonusTime) {
+			carriage.shape.setSize({ carriageWidth * 3, carriageHeight });
+		}
+		else {
+			carriage.shape.setSize({ carriageWidth, carriageHeight });
+		}
+	};
+	void ActivateSpeedDownBonus(Bonus bonus, Carriage carriage, Ball ball, Time gameClock) {};
+	void ActivateSafeBottomBonus(Bonus bonus, Carriage carriage, Ball ball, Time gameClock) {};
+	void ActivateStickCarriageBonus(Bonus bonus, Carriage carriage, Ball ball, Time gameClock) {};
+	void ActivateChangeWayBonus(Bonus bonus, Carriage carriage, Ball ball, Time gameClock) {};
 	
+	void BonusDeactivate(Bonus bonus, Carriage carriage, Ball ball, Time gameClock) {}
 };

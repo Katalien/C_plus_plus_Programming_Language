@@ -16,9 +16,12 @@ using namespace std;
 using namespace sf;
 
 vector<Block> CreateBlocks();
+vector<Bonus> CreateBonuses(Block block);
 
 int main() {
     srand(time(0));
+    Clock gameClock;
+    Time t2 = seconds(10);
     ResultTable table{0, 60};
     RenderWindow window{ {windowWidth, windowHeight}, "Arkanoid"};
     window.setFramerateLimit(60);
@@ -57,15 +60,14 @@ int main() {
         ball.update();
         carriage.update();
         interaction.solveCollision(ball, carriage);
-        cout << player.GetScore() << endl;
+     //   cout << player.GetScore() << endl;
         for (int i = 0; i < blocks.size(); i++) {
             Type type = interaction.solveCollision(ball, blocks[i]);
             if (type != null) {
                 player.SetScore(player.GetScore() + 1);
             }
             if (type == withBonus) {
-                Bonus bonus = { blocks[i].getX(), blocks[i].getY()};
-                bonuses.push_back(bonus);
+                bonuses = CreateBonuses(blocks[i]);
             }
             if (type == speedUp) {
                 ball.velocity.x = ball.velocity.x + 5;
@@ -75,6 +77,10 @@ int main() {
         for (int i = 0; i < bonuses.size(); i++) {
             window.draw(bonuses.at(i).shape);
             bonuses.at(i).update();
+            if (interaction.IsActivated(bonuses.at(i), carriage, gameClock.getElapsedTime()) == true) {
+                bonuses.at(i).shape.setFillColor({ 0, 0, 0, 0 });
+            }
+            
         }
         if (ball.bottom() == windowHeight) {
             player.SetScore(player.GetScore() - 1);
@@ -121,3 +127,29 @@ vector<Block> CreateBlocks() {
     }
     return blocks;
 };
+
+vector<Bonus> CreateBonuses( Block block) {
+    vector <Bonus> bonuses;
+    int tmp = rand() % 5;
+    if (tmp == 0) {
+        SizeIncreaseBonus bonus { block.getX(), block.getY() };
+        bonuses.push_back(bonus);
+    }
+    if (tmp == 1) {
+        SpeedDownBonus bonus{ block.getX(), block.getY() };
+        bonuses.push_back(bonus);
+    }
+    if (tmp == 2) {
+        SafeBottomBonus bonus{ block.getX(), block.getY() };
+        bonuses.push_back(bonus);
+    }
+    if (tmp == 3) {
+        StickCarriageBonus bonus{ block.getX(), block.getY() };
+        bonuses.push_back(bonus);
+    }
+    if (tmp == 4) {
+        ChangeWayBonus bonus{ block.getX(), block.getY() };
+        bonuses.push_back(bonus);
+    }
+    return bonuses;
+}
