@@ -12,11 +12,13 @@
 #include"Window.hpp"
 #include<string>
 
+class Interaction;
+
 using namespace std;
 using namespace sf;
 
 vector<Block> CreateBlocks();
-vector<Bonus> CreateBonuses(Block block);
+vector<Bonus*> CreateBonuses(Block block, Carriage* carriage, Ball* ball, RenderWindow* window, Interaction* interaction);
 
 int main() {
     srand(time(0));
@@ -24,16 +26,18 @@ int main() {
     Time t2 = seconds(10);
     ResultTable table{0, 60};
     RenderWindow window{ {windowWidth, windowHeight}, "Arkanoid"};
-    window.setFramerateLimit(60);
+    //window.setFramerateLimit(60);
     Ball ball{ windowWidth / 2, windowHeight / 2 };
     Carriage carriage{ windowWidth / 2, windowHeight - 50 };
     Interaction interaction;
     vector<Block> blocks = CreateBlocks();
-    vector <Bonus> bonuses;
+    vector <Bonus*> bonuses;
+    vector <Bonus*> activeBonuses;
     Player player;
     Bonus bonus;
     Font font;
     string score;
+    bool isSafe = false;
     font.loadFromFile("arial.ttf");
     Text resultText("0", font);
     Text text("hello", font);
@@ -50,42 +54,58 @@ int main() {
     while (true) {
         window.clear(Color::Black);
         window.draw(table.shape);
-        // text
-        
        
         if (Keyboard::isKeyPressed(Keyboard::Key::Escape)) break;
         window.draw(ball.shape);
         window.draw(carriage.shape);
         window.draw(text);
-        ball.update();
+        ball.update(ball.GetBallVelocityX(), ball.GetBallVelocityY());
         carriage.update();
         interaction.solveCollision(ball, carriage);
-     //   cout << player.GetScore() << endl;
+
         for (int i = 0; i < blocks.size(); i++) {
             Type type = interaction.solveCollision(ball, blocks[i]);
             if (type != null) {
                 player.SetScore(player.GetScore() + 1);
             }
             if (type == withBonus) {
-                bonuses = CreateBonuses(blocks[i]);
+                bonuses = CreateBonuses(blocks[i], &carriage, &ball, &window, &interaction);
             }
             if (type == speedUp) {
-                ball.velocity.x = ball.velocity.x + 5;
-                ball.velocity.y = ball.velocity.y + 5;
+                ball.SetVelocityX(ballVelocity);
+                ball.SetVelocityY(ballVelocity + 0.2);
             }
-       }
-        for (int i = 0; i < bonuses.size(); i++) {
-            window.draw(bonuses.at(i).shape);
-            bonuses.at(i).update();
-            if (interaction.IsActivated(bonuses.at(i), carriage, gameClock.getElapsedTime()) == true) {
-                bonuses.at(i).shape.setFillColor({ 0, 0, 0, 0 });
-            }
-            
         }
-        if (ball.bottom() == windowHeight) {
-            player.SetScore(player.GetScore() - 1);
-            
-        }       
+        //cout << ball.GetBallVelocityX() << "  " << ball.GetBallVelocityY() << endl;
+        for (int i = 0; i < bonuses.size(); i++) {
+            //window.draw(bonuses.at(i).shape);
+            window.draw(bonuses.at(i)->shape);
+            bonuses.at(i)->update();
+            if (interaction.IsActivated(bonuses.at(i), &carriage, gameClock.getElapsedTime()) == true) {
+                bonuses.at(i)->shape.setFillColor({ 0, 0, 0, 0 });
+                activeBonuses.push_back(bonuses.at(i));
+            }
+        }
+        for (int i = 0; i < activeBonuses.size(); i++) {
+            activeBonuses.at(i)->BonusCheck( &carriage, &ball, &window, &player, gameClock.getElapsedTime());
+            if (activeBonuses.at(i)->IsActive() == false) {
+                activeBonuses.erase(activeBonuses.begin() + i);
+            }
+        }
+        //cout << ball.bottom() << "   " <<windowHeight<< endl;
+        if (ball.bottom() >= windowHeight) {
+            isSafe = false;
+            for (int i = 0; i < activeBonuses.size(); i++) {
+                if (activeBonuses.at(i)->GetType() == safeBottomBonus) {
+                    activeBonuses.at(i)->SetActivity(false);
+                    isSafe = true;
+                }  
+            }
+            if (!isSafe) {
+                player.SetScore(player.GetScore() - 1);
+            }
+        }
+       
         blocks.erase(remove_if(begin(blocks), end(blocks), [](const Block& _block) {return _block.destroyed;}), end(blocks));
         for (int i = 0; i < blocks.size(); i++) {
             window.draw(blocks[i].shape);
@@ -128,27 +148,32 @@ vector<Block> CreateBlocks() {
     return blocks;
 };
 
-vector<Bonus> CreateBonuses( Block block) {
-    vector <Bonus> bonuses;
-    int tmp = rand() % 5;
+vector<Bonus*> CreateBonuses( Block block, Carriage* carriage, Ball* ball, RenderWindow* window, Interaction* interaction) {
+    vector <Bonus*> bonuses;
+    //int tmp = rand() % 6;
+     int tmp = 5;
     if (tmp == 0) {
-        SizeIncreaseBonus bonus { block.getX(), block.getY() };
+        Bonus* bonus = new SizeIncreaseBonus{ block.getX(), block.getY(), carriage };
         bonuses.push_back(bonus);
     }
     if (tmp == 1) {
-        SpeedDownBonus bonus{ block.getX(), block.getY() };
+        Bonus* bonus = new SpeedUpBonus{ block.getX(), block.getY(), ball};
         bonuses.push_back(bonus);
     }
     if (tmp == 2) {
-        SafeBottomBonus bonus{ block.getX(), block.getY() };
+        Bonus* bonus = new SafeBottomBonus{ block.getX(), block.getY(), window, ball };
         bonuses.push_back(bonus);
     }
     if (tmp == 3) {
-        StickCarriageBonus bonus{ block.getX(), block.getY() };
+        Bonus* bonus = new StickCarriageBonus{ block.getX(), block.getY(), carriage, ball};
         bonuses.push_back(bonus);
     }
     if (tmp == 4) {
-        ChangeWayBonus bonus{ block.getX(), block.getY() };
+        Bonus* bonus = new ChangeWayBonus { block.getX(), block.getY(), ball };
+        bonuses.push_back(bonus);
+    }
+    if (tmp == 5) {
+        Bonus* bonus = new NewBlockBonus{ block.getX(), block.getY(),ball, window, interaction};
         bonuses.push_back(bonus);
     }
     return bonuses;

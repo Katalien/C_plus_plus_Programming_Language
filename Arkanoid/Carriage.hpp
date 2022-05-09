@@ -7,12 +7,12 @@
 using namespace std;
 using namespace sf;
 
-constexpr float carriageWidth{80.f}, carriageHeight{20.f}, carriageVelocity{8.f};
+constexpr float carriageWidth{80.f}, carriageHeight{20.f}, carriageVelocity{0.4};
 
 class Carriage {
 public:
 	RectangleShape shape;
-	Vector2f velocity;
+
 	float getX() { return shape.getPosition().x; };
 	float getY() { return shape.getPosition().y; };
 	float left() { return getX() - shape.getSize().x / 2.f; }
@@ -38,4 +38,11 @@ public:
 			velocity.x = 0;
 		}
 	}
+	void SetVelocityX(float vel) { velocity.x = vel; };
+	void SetVelocityY(float vel) { velocity.y = vel; };
+	float GetVelocityX() { return velocity.x; };
+	float GetVelocityY() { return velocity.y; };
+	Vector2f GetVelocity() { return velocity; };
+private:
+	Vector2f velocity;
 };

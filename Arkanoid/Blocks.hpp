@@ -2,12 +2,12 @@
 #include <SFML/Graphics.hpp>
 #include <SFML/Window.hpp>
 #include "Ball.hpp"
-#include"Bonus.hpp"
-
+//#include"Bonus.hpp"
+class Bonus;
 using namespace std;
 using namespace sf;
 
-constexpr float blockWidth{ 60.f }, blockHeight{ 20.f };
+constexpr float blockWidth{ 60.f }, blockHeight{ 20.f }, moveBlockVelocity{0.001};
 constexpr int countBlocksX{ 11 }, countBlockY{ 4 };
 
 typedef enum Type {
@@ -16,16 +16,15 @@ typedef enum Type {
 	unbreakable,
 	withBonus,
 	speedUp,
+	movingBlock,
 }Type;
 
 class Block {
 public:
 	
 	RectangleShape shape;
-	bool destroyed{ false };
-	 
-	
 
+	bool destroyed{ false };
 	int getLives() { return lives; }
 	void reduceLives() {
 			lives = getLives() - 1;
@@ -58,6 +57,7 @@ public:
 private:
 	Type type;
 	int lives;
+
 };
 
 class UnbreakableBlock : public Block {
@@ -86,4 +86,30 @@ public:
 		shape.setFillColor(Color:: Magenta);
 		SetType(speedUp);
 	}
+};
+
+class MovingBlock : public Block {
+public:
+	
+	MovingBlock(float _x, float _y) : Block(_x, _y) {
+		shape.setFillColor(Color::Green);
+		SetType(movingBlock);
+		velocity.x = moveBlockVelocity;
+		velocity.y = 0;
+
+	}
+	void update() {
+		shape.move({ moveBlockVelocity, 0 });
+		if ( left() <= 0) {
+			//shape.move({ moveBlockVelocity, 0 });
+			velocity.x = moveBlockVelocity;
+		}
+		else if (right() >= windowWidth) {
+			//shape.move({ -moveBlockVelocity, 0 });
+			velocity.x = -2*moveBlockVelocity;
+		}
+		shape.move(velocity);
+	}
+private:
+	Vector2f velocity;
 };

@@ -4,7 +4,9 @@
 
 class Player {
 public:
-	int score = 0;
+
 	int GetScore() { return score; }
 	void SetScore(int _score) { score = _score; };
+private:
+	int score = 0;
 };
