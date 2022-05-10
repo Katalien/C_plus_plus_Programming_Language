@@ -7,14 +7,12 @@
 #include"Player.hpp"
 #include"Carriage.hpp"
 #include"Blocks.hpp"
-//#include"Interaction.hpp"
 
 class Interaction;
 
 using namespace std;
 using namespace sf;
 using std::vector;
-
 
 constexpr float bonusWidth{ 20.f }, bonusHeight{ 20.f }, bonusVelocity{ 0.3 };
 const Time oneBonusTime = seconds(10);
@@ -28,31 +26,20 @@ typedef enum BonusType {
 	newBlockBonus,
 };
 
-
-
 class Bonus{
 public:
+	Bonus() {};
+	Bonus(float _x, float _y);
 	RectangleShape shape;
 	Vector2f velocity{0, bonusVelocity };
 	BonusType GetType() { return type; };
 	float getX() { return shape.getPosition().x; };
 	float getY() { return shape.getPosition().y; };
-	float left() { return getX() - shape.getSize().x / 2.f; }
-	float right() { return getX() + shape.getSize().x / 2.f; }
-	float top() { return getY() - shape.getSize().y / 2.f; }
-	float bottom() { return getY() + shape.getSize().y / 2.f; }
-	Bonus() {};
-	
-	Bonus(float _x, float _y) {
-		shape.setPosition(_x, _y);
-		shape.setFillColor(Color::Green);
-		shape.setSize({ bonusWidth, bonusHeight });
-		shape.setOrigin(bonusWidth / 2.f, bonusHeight / 2.f);
-		SetActivity(false);
-	}
-	void update() {
-		shape.move(velocity);
-	}
+	float left() { return getX() - shape.getSize().x / 2.f; };
+	float right() { return getX() + shape.getSize().x / 2.f; };
+	float top() { return getY() - shape.getSize().y / 2.f; };
+	float bottom() { return getY() + shape.getSize().y / 2.f; };	
+	void update();		
 	void SetType(BonusType _type) { type = _type; };
 	Time GetStartTime() { return startTime; };
 	void SetStartTime(Time _startTime) { startTime = _startTime; };
@@ -62,24 +49,7 @@ public:
 	Clock GetBonusClock() { return bonusClock; };
 	virtual void BonusActivate() {};
 	virtual void BonusDeactivate() {};
-	void BonusCheck( Carriage* carriage, Ball* ball, RenderWindow* window, Player* player, Time gameClock) {
-		
-		if (IsActive() == false) {
-			cout << "OOOOOOPS" << endl;
-			return;
-		}		
-		if (GetType() == newBlockBonus) {
-			BonusActivate();
-			return;
-		}
-		if (GetBonusClock().getElapsedTime() < oneBonusTime) {
-			BonusActivate();
-		}
-		if (GetBonusClock().getElapsedTime() > oneBonusTime) {
-			SetActivity(false);
-			BonusDeactivate();
-		}
-	}
+	void BonusCheck(Carriage* carriage, Ball* ball, RenderWindow* window, Player* player, Time gameClock);		
 private:
 	BonusType type;
 	Clock bonusClock;
@@ -89,96 +59,27 @@ private:
 
 class SizeIncreaseBonus : public Bonus {
 public:
-	SizeIncreaseBonus(float _x, float _y, Carriage* _carriage) : Bonus(_x, _y) {
-		SetType(sizeIncreaseBonus);
-		carriage = _carriage;
-	}
-	void BonusActivate() {
-		carriage->shape.setSize({ carriageWidth * 3, carriageHeight });
-	};
-	void BonusDeactivate() {
-		carriage->shape.setSize({ carriageWidth, carriageHeight });
-	};
+	SizeIncreaseBonus(float _x, float _y, Carriage* _carriage);
+	void BonusActivate();
+	void BonusDeactivate();
+		
 private:
 	Carriage* carriage;
 } ;
 
-
 class SpeedUpBonus : public Bonus {
 public:
-	SpeedUpBonus(float _x, float _y, Ball* _ball) : Bonus(_x, _y) {
-		SetType(speedUpBonus);
-		ball = _ball;
-	}
-	void BonusActivate() {
-		if (fabs(ball->GetBallVelocityX()) == ballVelocity) {
-			if (ball->GetBallVelocityX() > 0 && ball->GetBallVelocityY() > 0) {
-				ball->update(ball->GetBallVelocityX() + 0.2, ball->GetBallVelocityY() + 0.2);
-			}
-			if (ball->GetBallVelocityX() < 0 && ball->GetBallVelocityY() < 0) {
-				ball->update(ball->GetBallVelocityX() - 0.2, ball->GetBallVelocityY() - 0.2);
-			}
-			if (ball->GetBallVelocityX() > 0 && ball->GetBallVelocityY() < 0) {
-				ball->update(ball->GetBallVelocityX() + 0.2, ball->GetBallVelocityY() - 0.2);
-			}
-			if (ball->GetBallVelocityX() < 0 && ball->GetBallVelocityY() > 0) {
-				ball->update(ball->GetBallVelocityX() - 0.2, ball->GetBallVelocityY() + 0.2);
-			}
-		}
-	};
-	void BonusDeactivate() {
-		if (fabs(ball->GetBallVelocityX()) > ballVelocity) {
-
-			if (ball->GetBallVelocityX() >= 0 && ball->GetBallVelocityY() >= 0) {
-				ball->update(ball->GetBallVelocityX() - 0.2, ball->GetBallVelocityY() - 0.2);
-			}
-			if (ball->GetBallVelocityX() < 0 && ball->GetBallVelocityY() < 0) {
-				ball->update(ball->GetBallVelocityX() + 0.2, ball->GetBallVelocityY() + 0.2);
-			}
-			if (ball->GetBallVelocityX() > 0 && ball->GetBallVelocityY() < 0) {
-				ball->update(ball->GetBallVelocityX() - 0.2, ball->GetBallVelocityY() + 0.2);
-			}
-			if (ball->GetBallVelocityX() < 0 && ball->GetBallVelocityY() > 0) {
-				ball->update(ball->GetBallVelocityX() + 0.2, ball->GetBallVelocityY() - 0.2);
-			}
-			//??
-			if (ball->GetBallVelocityX() == 0 && ball->GetBallVelocityY() > 0) {
-				ball->update(ball->GetBallVelocityY() + 0.2, ball->GetBallVelocityY() - 0.2);
-			}
-			if (ball->GetBallVelocityX() == 0 && ball->GetBallVelocityY() < 0) {
-				ball->update(ball->GetBallVelocityY() - 0.2, ball->GetBallVelocityY() + 0.2);
-			}
-			if (ball->GetBallVelocityX() > 0 && ball->GetBallVelocityY() == 0) {
-				ball->update(ball->GetBallVelocityY() + 0.2, ball->GetBallVelocityY() - 0.2);
-			}
-			if (ball->GetBallVelocityX() < 0 && ball->GetBallVelocityY() == 0) {
-				ball->update(ball->GetBallVelocityY() - 0.2, ball->GetBallVelocityY() - 0.2);
-			}
-		}
-	};
+	SpeedUpBonus(float _x, float _y, Ball* _ball);
+	void BonusActivate();
+	void BonusDeactivate();
 private:
 	Ball* ball;
 };
 
 class SafeBottomBonus : public Bonus {
 public:
-	SafeBottomBonus(float _x, float _y, RenderWindow* _window, Ball* _ball) : Bonus(_x, _y) {
-		SetType(safeBottomBonus);
-		window = _window;
-		ball = _ball;
-	}
-	void BonusActivate() {
-		RectangleShape shape;
-		shape.setPosition(0, windowHeight - 5);
-		shape.setFillColor(Color::Yellow);
-		shape.setSize({ windowWidth, 5 });
-		//cout << ball->GetBallVelocityX() << "   " << ball->GetBallVelocityY() << endl;
-		window->draw(shape);
-		//ball->update(ball->GetBallVelocityX(), ball->GetBallVelocityY());
-		if (ball->bottom() >= windowHeight) {
-			SetActivity(false);
-		}
-	};
+	SafeBottomBonus(float _x, float _y, RenderWindow* _window, Ball* _ball);
+	void BonusActivate();
 private:
 	RenderWindow* window;
 	Ball* ball;
@@ -186,39 +87,8 @@ private:
 
 class StickCarriageBonus : public Bonus {
 public:
-	StickCarriageBonus(float _x, float _y, Carriage* _carriage, Ball* _ball) : Bonus(_x, _y) {
-		SetType(stickCarriageBonus);
-		carriage = _carriage;
-		ball = _ball;
-	}
-
-	void BonusActivate() {
-		if ((ball->right() >= carriage->left() && ball->left() <= carriage->right() && ball->bottom() >= carriage->top() && ball->top() <= carriage->bottom()) == false) {
-			return;
-		}
-		ball->SetVelocityY(0);
-		ball->SetVelocityX(carriage->GetVelocityX());
-
-		float xPlace = ball->getX() - carriage->getX();
-		if (xPlace > 0) {
-			ball->shape.setPosition({ carriage->getX() + xPlace, windowHeight - 50 - carriageHeight });
-		}
-		if (xPlace < 0) {
-			ball->shape.setPosition({ carriage->getX() - xPlace, windowHeight - 50 - carriageHeight });
-		}
-		if (xPlace == 0) {
-			ball->shape.setPosition({ carriage->getX(), windowHeight - 50 - carriageHeight });
-		}
-		if (Keyboard::isKeyPressed(Keyboard::Key::Left) || ball->right()>=windowWidth ) {
-			ball->SetVelocityX(-carriageVelocity);
-
-		}
-		else if (Keyboard::isKeyPressed(Keyboard::Key::Right) || ball->left() <= 0) {
-			ball->SetVelocityX(carriageVelocity);
-
-		}
-	};
-	void BonusDeactivate() {};
+	StickCarriageBonus(float _x, float _y, Carriage* _carriage, Ball* _ball);
+	void BonusActivate();
 private:
 	Carriage* carriage;
 	Ball* ball;
@@ -226,39 +96,11 @@ private:
 
 class ChangeWayBonus : public Bonus {
 public:
-	ChangeWayBonus(float _x, float _y, Ball* _ball) : Bonus(_x, _y) {
-		SetType(changeWayBonus);
-		ball = _ball;
-		SetRandTime();
-	}
+	ChangeWayBonus(float _x, float _y, Ball* _ball);
 	void SetRandTime() { randTime = rand() % (int)oneBonusTime.asSeconds(); }
 	int GetRandTime() { return randTime; };
-	void BonusActivate() {
-		int changeOption = rand() % 3;
-		ball->shape.setFillColor(Color::Green);
-		if ((int)GetBonusClock().getElapsedTime().asSeconds() == randTime) {
-			cout << changeOption << endl;
-			if (changeOption == 0) {
-				ball->SetVelocityX(-ball->GetBallVelocityX());
-				ball->SetVelocityY(-ball->GetBallVelocityY());
-
-			}
-			if (changeOption == 1) {
-				ball->SetVelocityX(ball->GetBallVelocityX());
-				ball->SetVelocityY(-ball->GetBallVelocityY());
-
-			}
-			if (changeOption == 2) {
-				ball->SetVelocityX(-ball->GetBallVelocityX());
-				ball->SetVelocityY(ball->GetBallVelocityY());
-			}
-			SetActivity(false);
-			BonusDeactivate();
-		}
-	};
-	void BonusDeactivate() {
-		ball->shape.setFillColor(Color::White);
-	};
+	void BonusActivate();
+	void BonusDeactivate();
 private:
 	int randTime;
 	Ball* ball;
@@ -266,15 +108,7 @@ private:
 
 class NewBlockBonus : public Bonus {
 public:
-	NewBlockBonus(float _x, float _y, Ball* _ball, RenderWindow* _window, Player* _player, Interaction* _interaction) : Bonus(_x, _y) {
-		SetType(newBlockBonus);
-		ball = _ball;
-		window = _window;
-		interaction = _interaction;
-		player = _player;
-		block = new MovingBlock(windowWidth / 2, windowHeight / 4 + (rand()%(windowHeight/2) + 70));
-		block->shape.setFillColor(Color::Green);
-	}
+	NewBlockBonus(float _x, float _y, Ball* _ball, RenderWindow* _window, Player* _player, Interaction* _interaction);
 	void BonusActivate();
 		
 private:

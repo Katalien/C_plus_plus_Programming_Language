@@ -170,7 +170,6 @@ vector<Block> CreateBlocks() {
     for (int i = 0; i < countBlocksX; i++) {
         for (int j = 0; j < countBlockY; j++) {
             int tmp = rand() % 4;
-            //int tmp = 1;
             if (tmp == 0) {
                 Block blockTmp{ (i + 1) * (blockWidth + 3) + 22, 50 + (j + 2) * (blockHeight + 3) };
                 blocks.push_back(blockTmp);
