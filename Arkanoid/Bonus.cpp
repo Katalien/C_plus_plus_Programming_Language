@@ -8,7 +8,12 @@ void NewBlockBonus::BonusActivate() {
 	block->update();
 	Type blockType = interaction->solveCollision(*ball, *block);
 	if (blockType != null) {
+		block->reduceLives();
+		block->changeOpacity();
+		if (block->getLives() == 0) {
+			block->destroyed = true;
+			SetActivity(false);
+		}
 		player->SetScore(player->GetScore() + 1);
-
 	}
 }

@@ -18,7 +18,7 @@ using namespace std;
 using namespace sf;
 
 vector<Block> CreateBlocks();
-vector<Bonus*> CreateBonuses(Block block, Carriage* carriage, Ball* ball, RenderWindow* window, Player* player, Interaction* interaction);
+Bonus* CreateBonuses(Block block, Carriage* carriage, Ball* ball, RenderWindow* window, Player* player, Interaction* interaction);
 
 int main() {
     srand(time(0));
@@ -69,7 +69,8 @@ int main() {
                 player.SetScore(player.GetScore() + 1);
             }
             if (type == withBonus) {
-                bonuses = CreateBonuses(blocks[i], &carriage, &ball, &window, &player, &interaction);
+                Bonus* tmpBonus = CreateBonuses(blocks[i], &carriage, &ball, &window, &player, &interaction);
+                bonuses.push_back(tmpBonus);
             }
             if (type == speedUp) {
                 ball.SetVelocityX(ballVelocity);
@@ -78,12 +79,16 @@ int main() {
         }
         //cout << ball.GetBallVelocityX() << "  " << ball.GetBallVelocityY() << endl;
         for (int i = 0; i < bonuses.size(); i++) {
-            //window.draw(bonuses.at(i).shape);
             window.draw(bonuses.at(i)->shape);
             bonuses.at(i)->update();
-            if (interaction.IsActivated(bonuses.at(i), &carriage, gameClock.getElapsedTime()) == true) {
+            if (interaction.IsActivated(bonuses.at(i), &carriage, gameClock.getElapsedTime()) == true ) {
                 bonuses.at(i)->shape.setFillColor({ 0, 0, 0, 0 });
                 activeBonuses.push_back(bonuses.at(i));
+                bonuses.erase(bonuses.begin() + i);
+                continue;
+            }
+            if (interaction.IsActivated(bonuses.at(i), &carriage, gameClock.getElapsedTime()) == false && bonuses.at(i)->getY() >= windowHeight) {
+                bonuses.erase(bonuses.begin() + i);
             }
         }
         for (int i = 0; i < activeBonuses.size(); i++) {
@@ -92,7 +97,6 @@ int main() {
                 activeBonuses.erase(activeBonuses.begin() + i);
             }
         }
-        //cout << ball.bottom() << "   " <<windowHeight<< endl;
         if (ball.bottom() >= windowHeight) {
             isSafe = false;
             for (int i = 0; i < activeBonuses.size(); i++) {
@@ -148,33 +152,39 @@ vector<Block> CreateBlocks() {
     return blocks;
 };
 
-vector<Bonus*> CreateBonuses( Block block, Carriage* carriage, Ball* ball, RenderWindow* window, Player* player, Interaction* interaction) {
+Bonus* CreateBonuses( Block block, Carriage* carriage, Ball* ball, RenderWindow* window, Player* player, Interaction* interaction) {
     vector <Bonus*> bonuses;
-    //int tmp = rand() % 6;
-     int tmp = 5;
+
+   // int tmp = rand() % 6;
+     int tmp = 3;
     if (tmp == 0) {
         Bonus* bonus = new SizeIncreaseBonus{ block.getX(), block.getY(), carriage };
         bonuses.push_back(bonus);
+        return bonus;
     }
     if (tmp == 1) {
         Bonus* bonus = new SpeedUpBonus{ block.getX(), block.getY(), ball};
         bonuses.push_back(bonus);
+        return bonus;
     }
     if (tmp == 2) {
         Bonus* bonus = new SafeBottomBonus{ block.getX(), block.getY(), window, ball };
         bonuses.push_back(bonus);
+        return bonus;
     }
     if (tmp == 3) {
         Bonus* bonus = new StickCarriageBonus{ block.getX(), block.getY(), carriage, ball};
         bonuses.push_back(bonus);
+        return bonus;
     }
     if (tmp == 4) {
         Bonus* bonus = new ChangeWayBonus { block.getX(), block.getY(), ball };
         bonuses.push_back(bonus);
+        return bonus;
     }
     if (tmp == 5) {
         Bonus* bonus = new NewBlockBonus{ block.getX(), block.getY(),ball, window, player, interaction};
         bonuses.push_back(bonus);
+        return bonus;
     }
-    return bonuses;
 }

@@ -90,7 +90,6 @@ public:
 
 	bool IsActivated(Bonus* bonus, Carriage* carriage, Time gameTime) {
 		if (!IsTouch(*bonus, *carriage)) {
-			//bonus->SetActivity(false);
 			return false;
 		}
 		if (IsTouch(*bonus, *carriage)) {

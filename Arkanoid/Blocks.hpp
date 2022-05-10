@@ -7,7 +7,7 @@ class Bonus;
 using namespace std;
 using namespace sf;
 
-constexpr float blockWidth{ 60.f }, blockHeight{ 20.f }, moveBlockVelocity{0.001};
+constexpr float blockWidth{ 60.f }, blockHeight{ 20.f }, moveBlockVelocity{0.1};
 constexpr int countBlocksX{ 11 }, countBlockY{ 4 };
 
 typedef enum Type {

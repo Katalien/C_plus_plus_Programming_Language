@@ -63,11 +63,11 @@ public:
 	virtual void BonusActivate() {};
 	virtual void BonusDeactivate() {};
 	void BonusCheck( Carriage* carriage, Ball* ball, RenderWindow* window, Player* player, Time gameClock) {
-		srand(time(0));
+		
 		if (IsActive() == false) {
 			cout << "OOOOOOPS" << endl;
 			return;
-		}
+		}		
 		if (GetType() == newBlockBonus) {
 			BonusActivate();
 			return;
@@ -208,13 +208,13 @@ public:
 		if (xPlace == 0) {
 			ball->shape.setPosition({ carriage->getX(), windowHeight - 50 - carriageHeight });
 		}
-		if (Keyboard::isKeyPressed(Keyboard::Key::Left)) {
-			carriage->SetVelocityX(-carriageVelocity);
+		if (Keyboard::isKeyPressed(Keyboard::Key::Left) || ball->right()>=windowWidth ) {
+			//carriage->SetVelocityX(-carriageVelocity);
 			ball->SetVelocityX(-carriageVelocity);
 
 		}
-		else if (Keyboard::isKeyPressed(Keyboard::Key::Right)) {
-			carriage->SetVelocityX(carriageVelocity);
+		else if (Keyboard::isKeyPressed(Keyboard::Key::Right) || ball->left() <= 0) {
+			//carriage->SetVelocityX(carriageVelocity);
 			ball->SetVelocityX(carriageVelocity);
 
 		}
@@ -267,13 +267,13 @@ private:
 
 class NewBlockBonus : public Bonus {
 public:
-	NewBlockBonus (float _x, float _y, Ball* _ball, RenderWindow* _window, Player* _player, Interaction* _interaction) : Bonus(_x, _y) {
+	NewBlockBonus(float _x, float _y, Ball* _ball, RenderWindow* _window, Player* _player, Interaction* _interaction) : Bonus(_x, _y) {
 		SetType(newBlockBonus);
 		ball = _ball;
 		window = _window;
 		interaction = _interaction;
 		player = _player;
-		block = new MovingBlock(windowWidth / 2, windowHeight / 2);
+		block = new MovingBlock(windowWidth / 2, windowHeight / 4 + (rand()%(windowHeight/2) + 70));
 		block->shape.setFillColor(Color::Green);
 	}
 	void BonusActivate();
@@ -284,4 +284,5 @@ private:
 	Interaction* interaction;
 	Ball* ball;
 	Player* player;
+	vector<MovingBlock*> blocks;
 };
