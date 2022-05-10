@@ -53,7 +53,7 @@ public:
 			velocity.y = -GetBallVelocityY();
 			//cout << "y after " << velocity.y << endl;
 		}
-		else if (bottom() > windowHeight) {
+		else if (bottom() >= windowHeight) {
 			//SetVelocityY(-_ballVelocity);
 			//velocity.y = -ballVelocity;
 			velocity.y = -GetBallVelocityY();

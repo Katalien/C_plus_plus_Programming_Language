@@ -34,6 +34,7 @@ int main() {
     vector <Bonus*> bonuses;
     vector <Bonus*> activeBonuses;
     Player player;
+    bool onlyUnbreakable = true;
     Bonus bonus;
     Font font;
     string score;
@@ -44,17 +45,33 @@ int main() {
     text.setCharacterSize(45);
     text.setStyle(sf::Text::Bold);
     text.setColor(sf::Color::White);
-    text.setString("Score:");
-    
+    text.setString("Score:");    
     resultText.setCharacterSize(45);
     resultText.setStyle(sf::Text::Bold);
     resultText.setColor(sf::Color::White);
     resultText.setPosition(windowWidth / 4.f, 5);
 
+    Text finishText("GAME OVER", font);
+    finishText.setCharacterSize(100);
+    finishText.setStyle(Text::Bold);
+    finishText.setColor(Color::White);
+    finishText.setPosition(windowWidth/9.f, windowHeight/3.f);
+    Text endText;
+    endText.setFont(font);
+    endText.setCharacterSize(50);
+    endText.setStyle(Text::Bold);
+    endText.setColor(Color::White);
+    endText.setPosition(windowWidth / 3.5,  windowHeight / 2.f);
+
+    Text spaceText("Press Escape to close the window", font);
+    spaceText.setCharacterSize(40);
+    spaceText.setStyle(Text::Bold);
+    spaceText.setColor(Color::Yellow);
+    spaceText.setPosition(windowWidth / 7.f, 3.f * windowHeight / 4.f);
+
     while (true) {
         window.clear(Color::Black);
-        window.draw(table.shape);
-       
+        window.draw(table.shape);      
         if (Keyboard::isKeyPressed(Keyboard::Key::Escape)) break;
         window.draw(ball.shape);
         window.draw(carriage.shape);
@@ -65,7 +82,7 @@ int main() {
 
         for (int i = 0; i < blocks.size(); i++) {
             Type type = interaction.solveCollision(ball, blocks[i]);
-            if (type != null) {
+            if (type != null && type!=unbreakable) {
                 player.SetScore(player.GetScore() + 1);
             }
             if (type == withBonus) {
@@ -76,8 +93,12 @@ int main() {
                 ball.SetVelocityX(ballVelocity);
                 ball.SetVelocityY(ballVelocity + 0.2);
             }
+            if (blocks[i].GetType() != unbreakable) {
+                onlyUnbreakable = false;
+            }
+                //onlyUnbreakable = true;
         }
-        //cout << ball.GetBallVelocityX() << "  " << ball.GetBallVelocityY() << endl;
+     
         for (int i = 0; i < bonuses.size(); i++) {
             window.draw(bonuses.at(i)->shape);
             bonuses.at(i)->update();
@@ -91,25 +112,25 @@ int main() {
                 bonuses.erase(bonuses.begin() + i);
             }
         }
+        if (ball.bottom() >= windowHeight) {
+            isSafe = false;
+            for (int i = 0; i < activeBonuses.size(); i++) {
+                if (activeBonuses.at(i)->GetType() == safeBottomBonus) {
+                    //activeBonuses.at(i)->SetActivity(false);
+                    isSafe = true;
+                }
+            }
+            if (!isSafe) {
+                player.SetScore(player.GetScore() - 1);
+            }
+        }
         for (int i = 0; i < activeBonuses.size(); i++) {
             activeBonuses.at(i)->BonusCheck( &carriage, &ball, &window, &player, gameClock.getElapsedTime());
             if (activeBonuses.at(i)->IsActive() == false) {
                 activeBonuses.erase(activeBonuses.begin() + i);
             }
         }
-        if (ball.bottom() >= windowHeight) {
-            isSafe = false;
-            for (int i = 0; i < activeBonuses.size(); i++) {
-                if (activeBonuses.at(i)->GetType() == safeBottomBonus) {
-                    activeBonuses.at(i)->SetActivity(false);
-                    isSafe = true;
-                }  
-            }
-            if (!isSafe) {
-                player.SetScore(player.GetScore() - 1);
-            }
-        }
-       
+             
         blocks.erase(remove_if(begin(blocks), end(blocks), [](const Block& _block) {return _block.destroyed;}), end(blocks));
         for (int i = 0; i < blocks.size(); i++) {
             window.draw(blocks[i].shape);
@@ -118,7 +139,26 @@ int main() {
         resultText.setString(score);
         window.draw(text);
         window.draw(resultText);
+        if (onlyUnbreakable == true) {
+            ball.SetVelocityX(0.f);
+            ball.SetVelocityY(0.f);
+            carriage.SetVelocityX(0.f);
+            carriage.SetVelocityY(0.f);
 
+            window.draw(finishText);
+            if (player.GetScore() > 0) {
+                endText.setString("You've won");
+            }
+            if (player.GetScore() < 0) {
+                endText.setString("You've lose");
+            }
+            else {
+                endText.setString("Your score: 0");
+            }
+            window.draw(endText);
+            window.draw(spaceText);
+            if (Keyboard::isKeyPressed(Keyboard::Key::Escape)) break;
+        }
         window.display();
     }
 
@@ -130,7 +170,7 @@ vector<Block> CreateBlocks() {
     for (int i = 0; i < countBlocksX; i++) {
         for (int j = 0; j < countBlockY; j++) {
             int tmp = rand() % 4;
-            //int tmp = 2;
+            //int tmp = 1;
             if (tmp == 0) {
                 Block blockTmp{ (i + 1) * (blockWidth + 3) + 22, 50 + (j + 2) * (blockHeight + 3) };
                 blocks.push_back(blockTmp);
@@ -155,8 +195,8 @@ vector<Block> CreateBlocks() {
 Bonus* CreateBonuses( Block block, Carriage* carriage, Ball* ball, RenderWindow* window, Player* player, Interaction* interaction) {
     vector <Bonus*> bonuses;
 
-   // int tmp = rand() % 6;
-     int tmp = 3;
+      int tmp = rand() % 6;
+   //  int tmp = 4;
     if (tmp == 0) {
         Bonus* bonus = new SizeIncreaseBonus{ block.getX(), block.getY(), carriage };
         bonuses.push_back(bonus);

@@ -174,6 +174,7 @@ public:
 		shape.setSize({ windowWidth, 5 });
 		//cout << ball->GetBallVelocityX() << "   " << ball->GetBallVelocityY() << endl;
 		window->draw(shape);
+		//ball->update(ball->GetBallVelocityX(), ball->GetBallVelocityY());
 		if (ball->bottom() >= windowHeight) {
 			SetActivity(false);
 		}
@@ -209,12 +210,10 @@ public:
 			ball->shape.setPosition({ carriage->getX(), windowHeight - 50 - carriageHeight });
 		}
 		if (Keyboard::isKeyPressed(Keyboard::Key::Left) || ball->right()>=windowWidth ) {
-			//carriage->SetVelocityX(-carriageVelocity);
 			ball->SetVelocityX(-carriageVelocity);
 
 		}
 		else if (Keyboard::isKeyPressed(Keyboard::Key::Right) || ball->left() <= 0) {
-			//carriage->SetVelocityX(carriageVelocity);
 			ball->SetVelocityX(carriageVelocity);
 
 		}
