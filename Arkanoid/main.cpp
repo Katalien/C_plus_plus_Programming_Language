@@ -18,7 +18,7 @@ using namespace std;
 using namespace sf;
 
 vector<Block> CreateBlocks();
-vector<Bonus*> CreateBonuses(Block block, Carriage* carriage, Ball* ball, RenderWindow* window, Interaction* interaction);
+vector<Bonus*> CreateBonuses(Block block, Carriage* carriage, Ball* ball, RenderWindow* window, Player* player, Interaction* interaction);
 
 int main() {
     srand(time(0));
@@ -69,7 +69,7 @@ int main() {
                 player.SetScore(player.GetScore() + 1);
             }
             if (type == withBonus) {
-                bonuses = CreateBonuses(blocks[i], &carriage, &ball, &window, &interaction);
+                bonuses = CreateBonuses(blocks[i], &carriage, &ball, &window, &player, &interaction);
             }
             if (type == speedUp) {
                 ball.SetVelocityX(ballVelocity);
@@ -148,7 +148,7 @@ vector<Block> CreateBlocks() {
     return blocks;
 };
 
-vector<Bonus*> CreateBonuses( Block block, Carriage* carriage, Ball* ball, RenderWindow* window, Interaction* interaction) {
+vector<Bonus*> CreateBonuses( Block block, Carriage* carriage, Ball* ball, RenderWindow* window, Player* player, Interaction* interaction) {
     vector <Bonus*> bonuses;
     //int tmp = rand() % 6;
      int tmp = 5;
@@ -173,7 +173,7 @@ vector<Bonus*> CreateBonuses( Block block, Carriage* carriage, Ball* ball, Rende
         bonuses.push_back(bonus);
     }
     if (tmp == 5) {
-        Bonus* bonus = new NewBlockBonus{ block.getX(), block.getY(),ball, window, interaction};
+        Bonus* bonus = new NewBlockBonus{ block.getX(), block.getY(),ball, window, player, interaction};
         bonuses.push_back(bonus);
     }
     return bonuses;

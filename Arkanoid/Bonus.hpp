@@ -5,6 +5,8 @@
 #include <vector>
 #include "Blocks.hpp"
 #include"Player.hpp"
+#include"Carriage.hpp"
+#include"Blocks.hpp"
 //#include"Interaction.hpp"
 
 class Interaction;
@@ -25,6 +27,8 @@ typedef enum BonusType {
 	changeWayBonus,
 	newBlockBonus,
 };
+
+
 
 class Bonus{
 public:
@@ -64,8 +68,11 @@ public:
 			cout << "OOOOOOPS" << endl;
 			return;
 		}
+		if (GetType() == newBlockBonus) {
+			BonusActivate();
+			return;
+		}
 		if (GetBonusClock().getElapsedTime() < oneBonusTime) {
-			//cout << ball->GetBallVelocityX() << "  " << ball->GetBallVelocityY() << endl;
 			BonusActivate();
 		}
 		if (GetBonusClock().getElapsedTime() > oneBonusTime) {
@@ -260,23 +267,21 @@ private:
 
 class NewBlockBonus : public Bonus {
 public:
-	NewBlockBonus (float _x, float _y, Ball* _ball, RenderWindow* _window, Interaction* _interaction) : Bonus(_x, _y) {
+	NewBlockBonus (float _x, float _y, Ball* _ball, RenderWindow* _window, Player* _player, Interaction* _interaction) : Bonus(_x, _y) {
 		SetType(newBlockBonus);
 		ball = _ball;
 		window = _window;
 		interaction = _interaction;
+		player = _player;
 		block = new MovingBlock(windowWidth / 2, windowHeight / 2);
 		block->shape.setFillColor(Color::Green);
 	}
-	void BonusActivate() {
-		window->draw(block->shape);
-		block->update();		
-		//interaction->tmpF();
+	void BonusActivate();
 		
-	}
 private:
 	MovingBlock* block;
 	RenderWindow* window;
 	Interaction* interaction;
 	Ball* ball;
+	Player* player;
 };
