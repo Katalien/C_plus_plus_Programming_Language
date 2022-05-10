@@ -20,6 +20,5 @@ public:
         shape.setSize({ windowWidth*2, lineHeight });
         shape.setOrigin(lineWidth / 2.f, lineHeight / 2.f);
     }
-
 };
-//
+

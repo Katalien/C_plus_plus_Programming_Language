@@ -12,6 +12,8 @@ constexpr float carriageWidth{80.f}, carriageHeight{20.f}, carriageVelocity{0.4}
 class Carriage {
 public:
 	RectangleShape shape;
+	Carriage(float _x, float _y);
+	void update();
 
 	float getX() { return shape.getPosition().x; };
 	float getY() { return shape.getPosition().y; };
@@ -20,24 +22,7 @@ public:
 	float top() { return getY() - shape.getSize().y / 2.f; }
 	float bottom() { return getY() + shape.getSize().y / 2.f; }
 
-	Carriage(float _x, float _y) {
-		shape.setPosition(_x, _y);
-		shape.setFillColor(Color::Red);
-		shape.setSize({ carriageWidth, carriageHeight });
-		shape.setOrigin(carriageWidth/2.f, carriageHeight/2.f);
-	}
-	void update() {
-		shape.move(velocity);
-		if (Keyboard::isKeyPressed(Keyboard::Key::Left) && left() > 0) {
-			velocity.x = -carriageVelocity;
-		}
-		else if (Keyboard::isKeyPressed(Keyboard::Key::Right) && right() < windowWidth) {
-			velocity.x = carriageVelocity;
-		}
-		else {
-			velocity.x = 0;
-		}
-	}
+	
 	void SetVelocityX(float vel) { velocity.x = vel; };
 	void SetVelocityY(float vel) { velocity.y = vel; };
 	float GetVelocityX() { return velocity.x; };

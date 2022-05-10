@@ -151,10 +151,13 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Blocks.cpp" />
     <ClCompile Include="Bonus.cpp">
       <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(ProjectDir)SFML-2.5.1\include\;%(AdditionalIncludeDirectories);C:\Users\z.kate\source\repos\CPP_Arkanoid;</AdditionalIncludeDirectories>
       <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(ProjectDir)SFML-2.5.1\include\;%(AdditionalIncludeDirectories);C:\Users\z.kate\source\repos\CPP_Arkanoid;</AdditionalIncludeDirectories>
     </ClCompile>
+    <ClCompile Include="Carriage.cpp" />
+    <ClCompile Include="Interaction.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="test.hpp" />
   </ItemGroup>
