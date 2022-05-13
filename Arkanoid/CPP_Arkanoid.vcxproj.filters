@@ -18,9 +18,6 @@
     <ClCompile Include="main.cpp">
       <Filter>Файлы ресурсов</Filter>
     </ClCompile>
-    <ClCompile Include="test.hpp">
-      <Filter>Файлы ресурсов</Filter>
-    </ClCompile>
     <ClCompile Include="Bonus.cpp">
       <Filter>Файлы ресурсов</Filter>
     </ClCompile>

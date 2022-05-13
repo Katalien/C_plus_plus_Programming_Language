@@ -3,6 +3,7 @@
 #include <SFML/Window.hpp>
 #include<iostream>
 #include<vector>
+#include<string>
 #include"Ball.hpp"
 #include "Carriage.hpp"
 #include "Interaction.hpp"
@@ -10,23 +11,19 @@
 #include"Player.hpp"
 #include"Bonus.hpp"
 #include"Window.hpp"
-#include<string>
-
-class Interaction;
 
 using namespace std;
 using namespace sf;
 
 vector<Block> CreateBlocks();
 Bonus* CreateBonuses(Block block, Carriage* carriage, Ball* ball, RenderWindow* window, Player* player, Interaction* interaction);
+void FillText(Text* text, string _s, int _size, Color _color, float _x, float _y);
 
 int main() {
     srand(time(0));
     Clock gameClock;
-    Time t2 = seconds(10);
     ResultTable table{0, 60};
     RenderWindow window{ {windowWidth, windowHeight}, "Arkanoid"};
-    //window.setFramerateLimit(60);
     Ball ball{ windowWidth / 2, windowHeight / 2 };
     Carriage carriage{ windowWidth / 2, windowHeight - 50 };
     Interaction interaction;
@@ -36,46 +33,33 @@ int main() {
     Player player;
     bool onlyUnbreakable = true;
     Bonus bonus;
-    Font font;
     string score;
     bool isSafe = false;
+    Font font;
     font.loadFromFile("arial.ttf");
+
+    Text text("", font);
+    FillText(&text, "Score:", 45, Color::White, windowWidth / 15.f, 3.f);
     Text resultText("0", font);
-    Text text("hello", font);
-    text.setCharacterSize(45);
-    text.setStyle(sf::Text::Bold);
-    text.setColor(sf::Color::White);
-    text.setString("Score:");    
-    resultText.setCharacterSize(45);
-    resultText.setStyle(sf::Text::Bold);
-    resultText.setColor(sf::Color::White);
-    resultText.setPosition(windowWidth / 4.f, 5);
-
-    Text finishText("GAME OVER", font);
-    finishText.setCharacterSize(100);
-    finishText.setStyle(Text::Bold);
-    finishText.setColor(Color::White);
-    finishText.setPosition(windowWidth/9.f, windowHeight/3.f);
-    Text endText;
-    endText.setFont(font);
-    endText.setCharacterSize(50);
-    endText.setStyle(Text::Bold);
-    endText.setColor(Color::White);
-    endText.setPosition(windowWidth / 3.5,  windowHeight / 2.f);
-
-    Text spaceText("Press Escape to close the window", font);
-    spaceText.setCharacterSize(40);
-    spaceText.setStyle(Text::Bold);
-    spaceText.setColor(Color::Yellow);
-    spaceText.setPosition(windowWidth / 7.f, 3.f * windowHeight / 4.f);
+    FillText(&resultText, "", 45, Color::White, windowWidth / 4.f, 5.f);
+    Text finishText("", font);
+    FillText(&finishText, "GAME OVER", 100, Color::White, windowWidth / 9.f, windowHeight / 3.f);
+    Text endText("", font);
+    FillText(&endText, "", 50, Color:: White, windowWidth / 3.5, windowHeight / 2.f);
+    Text spaceText("",font);
+    FillText(&spaceText, "Press Escape to close the window", 40, Color::Yellow, windowWidth / 7.f, 3.f * windowHeight / 4.f);
+    Text escapeText("", font);
+    FillText(&escapeText, "Press Escape to finish", 30, { 169, 169, 169, 255 }, windowWidth / 2.f, 15.f);
+   
 
     while (true) {
         window.clear(Color::Black);
         window.draw(table.shape);      
-        if (Keyboard::isKeyPressed(Keyboard::Key::Escape)) break;
+        if (Keyboard::isKeyPressed(Keyboard::Key::Escape)) { break; };
         window.draw(ball.shape);
         window.draw(carriage.shape);
         window.draw(text);
+        window.draw(escapeText);
         ball.update(ball.GetBallVelocityX(), ball.GetBallVelocityY());
         carriage.update();
         interaction.solveCollision(ball, carriage);
@@ -96,9 +80,7 @@ int main() {
             if (blocks[i].GetType() != unbreakable) {
                 onlyUnbreakable = false;
             }
-                //onlyUnbreakable = true;
-        }
-     
+        }    
         for (int i = 0; i < bonuses.size(); i++) {
             window.draw(bonuses.at(i)->shape);
             bonuses.at(i)->update();
@@ -116,7 +98,6 @@ int main() {
             isSafe = false;
             for (int i = 0; i < activeBonuses.size(); i++) {
                 if (activeBonuses.at(i)->GetType() == safeBottomBonus) {
-                    //activeBonuses.at(i)->SetActivity(false);
                     isSafe = true;
                 }
             }
@@ -129,8 +110,7 @@ int main() {
             if (activeBonuses.at(i)->IsActive() == false) {
                 activeBonuses.erase(activeBonuses.begin() + i);
             }
-        }
-             
+        }            
         blocks.erase(remove_if(begin(blocks), end(blocks), [](const Block& _block) {return _block.destroyed;}), end(blocks));
         for (int i = 0; i < blocks.size(); i++) {
             window.draw(blocks[i].shape);
@@ -161,7 +141,6 @@ int main() {
         }
         window.display();
     }
-
     return 0;
 }
 
@@ -193,9 +172,7 @@ vector<Block> CreateBlocks() {
 
 Bonus* CreateBonuses( Block block, Carriage* carriage, Ball* ball, RenderWindow* window, Player* player, Interaction* interaction) {
     vector <Bonus*> bonuses;
-
-      int tmp = rand() % 6;
-   //  int tmp = 4;
+    int tmp = rand() % 6;
     if (tmp == 0) {
         Bonus* bonus = new SizeIncreaseBonus{ block.getX(), block.getY(), carriage };
         bonuses.push_back(bonus);
@@ -226,4 +203,13 @@ Bonus* CreateBonuses( Block block, Carriage* carriage, Ball* ball, RenderWindow*
         bonuses.push_back(bonus);
         return bonus;
     }
+}
+
+void FillText(Text* text, string _s, int _size, Color _color, float _x, float _y) {
+    text->setCharacterSize(_size);
+    text->setStyle(Text::Bold);
+    text->setColor(_color);
+    text->setPosition(_x, _y);
+    text->setString(_s);
+    return;
 }

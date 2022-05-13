@@ -3,7 +3,6 @@
 #include <SFML/Window.hpp>
 #include "Ball.hpp"
 
-
 using namespace std;
 using namespace sf;
 

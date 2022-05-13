@@ -147,7 +147,9 @@ void StickCarriageBonus::BonusActivate() {
 	}
 	else if (Keyboard::isKeyPressed(Keyboard::Key::Right) || ball->left() <= 0) {
 		ball->SetVelocityX(carriageVelocity);
-
+	}
+	if (Keyboard::isKeyPressed(Keyboard::Key::Space)) {
+		SetActivity(false);
 	}
 };
 

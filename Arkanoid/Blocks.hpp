@@ -2,7 +2,6 @@
 #include <SFML/Graphics.hpp>
 #include <SFML/Window.hpp>
 #include "Ball.hpp"
-class Bonus;
 
 using namespace std;
 using namespace sf;
