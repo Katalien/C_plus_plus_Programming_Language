@@ -33,3 +33,17 @@ Arkanoid/SFML-2.5.1/lib/cmake/SFML/SFMLConfigDependencies.cmake
 Arkanoid/SFML-2.5.1/lib/cmake/SFML/SFMLConfig.cmake
 Arkanoid/SFML-2.5.1/include/SFML/Window/WindowStyle.hpp
 Arkanoid/SFML-2.5.1/
+
+SFML-2.5.1/license.md
+SFML-2.5.1/readme.md
+SFML-2.5.1/lib/cmake/SFML/SFMLStaticTargets.cmake
+SFML-2.5.1/lib/cmake/SFML/SFMLStaticTargets-release.cmake
+SFML-2.5.1/lib/cmake/SFML/SFMLStaticTargets-debug.cmake
+SFML-2.5.1/lib/cmake/SFML/SFMLSharedTargets.cmake
+SFML-2.5.1/lib/cmake/SFML/SFMLSharedTargets-release.cmake
+SFML-2.5.1/lib/cmake/SFML/SFMLSharedTargets-debug.cmake
+SFML-2.5.1/lib/cmake/SFML/SFMLConfigVersion.cmake
+SFML-2.5.1/lib/cmake/SFML/SFMLConfigDependencies.cmake
+SFML-2.5.1/lib/cmake/SFML/SFMLConfig.cmake
+SFML-2.5.1/include/SFML/Window/WindowStyle.hpp
+SFML-2.5.1/
