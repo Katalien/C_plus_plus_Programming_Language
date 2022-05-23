@@ -21,8 +21,7 @@ int main() {
     Block* firstBlock = new Block;
     Block* secondBlock = new Block;
     Block* tmpBlock = new Block;
-    Container* firstCont = new Container;
-    Container* secondCont = new Container;
+    int firstIndex = 0;
 
     double ballr = 5;
     vector<CircleShape> shapes;
@@ -51,16 +50,21 @@ int main() {
                             isChosen = field.GetBlock(i)->IsActivated(coord.x, coord.y);
                             // choose two blocks to swap
                             if (isChosen) {
-                                if (!firstBlock->IsChosen()) {
+                                if (!firstBlock->IsChosen() /* || (firstBlock == secondBlock && firstBlock->IsChosen() == true)*/) {
                                     firstBlock = field.GetBlock(i);
                                     firstBlock->SetState(true);
+                                    firstBlock->shape.setRotation(15);
                                     cout << "YOU'VE CHOSEN 1 BLOCK" << endl;
+                                    break;
                                 }
-                                else {
+                                else if (field.IsNeighbor(firstBlock, field.GetBlock(i)) == true ) {
                                     secondBlock = field.GetBlock(i);
                                     secondBlock->SetState(true);
+                                    secondBlock->shape.setRotation(15);
                                     cout << "YOU'VE CHOSEN 2 BLOCK" << endl;
                                 }
+                                
+                                    //cout << "NOT NEIGHBORS" << endl;
                                 
                                 break;
                             }
@@ -70,10 +74,9 @@ int main() {
             }
             // if I've chosen two blocks - swap them
             if (firstBlock->IsChosen() == true && secondBlock->IsChosen() == true  && firstBlock != secondBlock) {
-              //  cout << firstBlock << " " << secondBlock << " " << field.GetBlockFromContainer(1) << endl;
-              // cout << firstBlock->GetContainer() << " " << secondBlock->GetContainer() << " " << field.GetBlockFromContainer(1)->GetContainer() << endl;
                 field.SwapBlocks(firstBlock, secondBlock);   
-               
+                firstBlock->shape.setRotation(45);
+                secondBlock->shape.setRotation(45);
                 firstBlock->SetState(false);
                 secondBlock->SetState(false);
             }

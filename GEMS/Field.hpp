@@ -44,6 +44,17 @@ public:
         return containers[i].GetContent(); 
     };
 
+    bool IsNeighbor(Block* first, Block* second) {
+        if (( (abs(first->getRight() - second->getLeft()) < first->getDiag() / 2) && first->getButton() == second->getButton() )||
+            ( (abs(first->getLeft() - second->getRight()) < first->getDiag() / 2) && first->getButton() == second->getButton())||
+            ( (abs(first->getTop() - second->getButton()) < first->getDiag() / 2) && first->getLeft() == second->getLeft() ) ||
+            ( (abs(first->getButton() - second->getTop()) < first->getDiag() / 2)&& first->getLeft() == second->getLeft() )) {
+            return true;
+        }
+        else {
+            return false;
+        }
+    }
 
     void SwapBlocks(Block* first, Block* second) {
         if (second == first) {

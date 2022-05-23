@@ -91,7 +91,7 @@ public:
 		float s = s1 + s2 + s3 + s4;
 		
 		if ((int)s <= (int)square) {
-			isChosen = true;
+			//isChosen = true;
 			//shape.setSize({ blockSide + 10.f,blockSide + 10.f });
 			return true;
 		}
