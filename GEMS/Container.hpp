@@ -17,6 +17,7 @@ public:
 		filled,
 	}State; 
 
+	Container() { isEmpty = empty; };
 
 	State CheckIsEmpty() {
 		return isEmpty;
@@ -31,6 +32,7 @@ public:
 		return block;
 	}
 
+	void SetState(State s) { isEmpty = s; };
 
 private:
 	State isEmpty = empty;

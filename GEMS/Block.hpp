@@ -89,7 +89,6 @@ public:
 		float s3 = formula.CountTriangle(b, o, c);
 		float s4 = formula.CountTriangle(c, o, d);
 		float s = s1 + s2 + s3 + s4;
-		cout << s << " " << square << endl;
 		
 		if ((int)s <= (int)square) {
 			isChosen = true;

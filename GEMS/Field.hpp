@@ -46,6 +46,9 @@ public:
 
 
     void SwapBlocks(Block* first, Block* second) {
+        if (second == first) {
+            return;
+        }
         Container* firstCont = first->GetContainer();
         Container* secondCont = second->GetContainer();
         Vector2f firstCoord = first->shape.getPosition();
@@ -54,7 +57,10 @@ public:
         secondCont->SetContent(first);
         first->shape.setPosition(secondCoord);
         second->shape.setPosition(firstCoord);
+        first->SetContainer(secondCont);
+        second->SetContainer(firstCont);
     }
+
 
     bool CheckDownConteiner(int i) {
         if (containers[i + 1].CheckIsEmpty() == Container::State::filled){
