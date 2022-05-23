@@ -14,22 +14,61 @@ using namespace std;
 
 int main() {
     srand(time(0));
-    RenderWindow window{ {windowWidth, windowHeight}, "Gems" };
+    RenderWindow window{ {windowWidth, windowHeight}, "GEMS" };
     Field field;
-    Block* block = new Block{ blockSide , blockSide };
-    double x = sqrt(blockSide * blockSide / 2);
-    cout << x;
-    Block* testBlock = new Block(x, x);
-    field.CreateBlocks();
-    vector <Block*> blocks = field.GetBlocks();
+    Mouse mouse;
+    Event event;
+    Block* firstBlock = new Block;
+    Block* secondBlock = new Block;
+    Block* tmpBlock = new Block;
+
+    double ballr = 5;
+    vector<CircleShape> shapes;
+
+        
+  
+    Vector2i coord;
+    bool isChosen = false;
     while (true) {
         window.clear(Color::Black);
         if (Keyboard::isKeyPressed(Keyboard::Key::Escape)) { break; };
-        
-        //window.draw(testBlock->shape);
-        for (auto item : blocks) {
-            window.draw(item->shape);
+       
+        for (int i = 0; i < blocksCount; ++i) {
+            window.draw(field.GetBlockFromContainer(i)->shape);          
         }
+
+            //mouse event
+            while (window.pollEvent(event)) {
+                if (event.type == Event::MouseButtonPressed) {
+                    if (event.key.code == Mouse::Left) {
+                        // if clicked remember coordinates
+                        coord = mouse.getPosition(window);
+                        // check blocks
+                        for (int i = 0; i < blocksCount; ++i) {
+                            isChosen = field.GetBlock(i)->IsActivated(coord.x, coord.y);
+                            // choose two blocks to swap
+                            if (isChosen) {
+                                if (!firstBlock->IsChosen()) {
+                                    firstBlock = field.GetBlock(i);
+                                    cout << "YOU'VE CHOSEN 1 BLOCK" << endl;
+                                }
+                                else {
+                                    secondBlock = field.GetBlock(i);
+                                    cout << "YOU'VE CHOSEN 2 BLOCK" << endl;
+                                }
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+            // if I've chosen rwo blocks - swap them
+            if (firstBlock->IsChosen() == true && secondBlock->IsChosen() == true) {
+                field.SwapBlocks(firstBlock, secondBlock);   
+                firstBlock->SetState(false);
+                secondBlock->SetState(false);
+            }
+            
         window.display();
     }
     return 0;

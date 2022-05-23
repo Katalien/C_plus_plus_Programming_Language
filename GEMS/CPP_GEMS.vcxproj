@@ -158,7 +158,9 @@
     <ClCompile Include="test.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Additional.hpp" />
     <ClInclude Include="Block.hpp" />
+    <ClInclude Include="Container.hpp" />
     <ClInclude Include="Field.hpp" />
     <ClInclude Include="Grid.hpp" />
   </ItemGroup>
